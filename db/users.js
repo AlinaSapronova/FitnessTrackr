@@ -58,7 +58,7 @@ async function getUserById(userId) {
     SELECT id, username,
     FROM users,
     WHERE id = ${userId} 
-    `);
+    `)
 
     // user.posts = await getPostsByUser(userId);
 
