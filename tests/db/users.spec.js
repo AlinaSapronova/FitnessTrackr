@@ -111,7 +111,7 @@ describe("DB Users", () => {
   });
 
   describe("EXTRA CREDIT: Hashing Passwords", () => {
-    it("EXTRA CREDIT: Does not store plaintext password in the database", async () => {
+    xit("EXTRA CREDIT: Does not store plaintext password in the database", async () => {
       const fakeUserData = {
         username: "Harry",
         password: faker.internet.password(),

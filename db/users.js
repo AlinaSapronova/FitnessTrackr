@@ -15,7 +15,8 @@ async function createUser({ username, password }) {
       `
       INSERT INTO users(username, password) 
       VALUES($1, $2) 
-      RETURNING  username;
+      ON CONFLICT (username) DO NOTHING
+      RETURNING  username, id;
     `,
       [username, hashedPassword]
     );
@@ -46,21 +47,25 @@ async function getUser({ username, password }) {
 
 async function getUserById(userId) {
  // eslint-disable-next-line no-useless-catch
- 
+ try{
   const {rows:[user] } = await client.query(`
   SELECT id
   FROM users
   WHERE id=$1
-  `, [userId]);
+  `,[userId]);
   return user;
-
+ }catch(error){
+throw error;
   }
+}
 // delete user.password;
 
 
 
 
 async function getUserByUsername(username) {
+  // eslint-disable-next-line no-useless-catch
+  try{
     const {
       rows: [user],
     } = await client.query(
@@ -72,7 +77,9 @@ async function getUserByUsername(username) {
       [username]
     );
     return user;
- 
+    }catch(error) {
+      throw error;
+    }
 }
 
 
