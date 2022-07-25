@@ -15,8 +15,7 @@ async function createUser({ username, password }) {
       `
       INSERT INTO users(username, password) 
       VALUES($1, $2) 
-      ON CONFLICT (username) DO NOTHING 
-      RETURNING *;
+      RETURNING  username;
     `,
       [username, hashedPassword]
     );
@@ -29,49 +28,39 @@ async function createUser({ username, password }) {
 
 //get user - this hsould be able to verify the password against the hashed password.
 async function getUser({ username, password }) {
-  const user = await getUserByUserName(username);
+  const user = await getUserByUsername(username);
   const hashedPassword = user.password;
-  const isValid = await bcrypt.compare(password, hashedPassword);
-  try {
-    const {rows}= await client.query(
-      `
-      INSERT INTO users(username, password) 
-      VALUES($1, $2) 
-      ON CONFLICT (username) DO NOTHING 
-      RETURNING *;
-    `,
-      [username, isValid]
-    );
-    return rows;
-
-  } catch (error) {
-    console.log("error getUser");
-    throw error;
+  const passwordsMatch = await bcrypt.compare(password, hashedPassword);
+  if (passwordsMatch) {
+  delete user.password;
+  return user;
+  } 
+  else if(!passwordsMatch) {
+    return ;
   }
+  else {
+    throw SomeError;
+  }
+  
 }
 
 async function getUserById(userId) {
-  try {
-    const {
-      rows: [user],
-    } = await client.query(`
-    SELECT id, username,
-    FROM users,
-    WHERE id = ${userId} 
-    `)
+ // eslint-disable-next-line no-useless-catch
+ 
+  const {rows:[user] } = await client.query(`
+  SELECT id
+  FROM users
+  WHERE id=$1
+  `, [userId]);
+  return user;
 
-    // user.posts = await getPostsByUser(userId);
-
-    return user;
-  } catch (error) {
-    throw error;
   }
-}
+// delete user.password;
+
 
 
 
 async function getUserByUsername(username) {
-  try {
     const {
       rows: [user],
     } = await client.query(
@@ -81,13 +70,11 @@ async function getUserByUsername(username) {
       WHERE username=$1;
     `,
       [username]
-    )
-
+    );
     return user;
-  } catch (error) {
-    throw error;
-  }
+ 
 }
+
 
 module.exports = {
   createUser,
