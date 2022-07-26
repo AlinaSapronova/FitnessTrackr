@@ -65,25 +65,29 @@ async function attachActivitiesToRoutines(routines) {}
 
 
 
-async function updateActivity({ id, name, description}) {
+async function updateActivity({ ...fields}) {
   // don't try to update the id
   // do update the name and description
   // return the updated activity
-try{
-const {rows} =
-  await client.query(
-    `
-    UPDATE activities
-    SET (name, description)
-    WHERE id= ${id}    
-    RETURNING *;
-  ` ,[name, description]
-   );
-  return rows;
-} catch (error) {
-  console.log("There is an error in updateActivity");
-  throw error;
-}
+  const setString = Object.keys(fields)
+  .map((key, index) => `"${key}"=$${index + 1}`)
+  .join(", ");
+ try{ 
+const{rows:[activity]} =
+    await client.query(
+      `
+      UPDATE activities
+      SET ${setString}
+      WHERE id=$1
+      RETURNING *;
+    `,
+      Object.values(fields)
+    );
+    return activity
+   } catch (error) {
+      console.log("There is an error in updateActivity");
+       throw error;
+ }
 }
 
 
