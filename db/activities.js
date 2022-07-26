@@ -42,32 +42,53 @@ async function getActivityById(id) {
   FROM activities
   WHERE id=$1;
 `, [id]);
-return rows[id];
+return rows[0];
 }
 
 
-async function getActivityByName(name) {}
+async function getActivityByName(name) {
+  try{
+  const {rows:[activity]} = await client.query(`
+  SELECT *
+  FROM activities
+  WHERE name=$1;
+`,[name]);
+return activity;
+  }catch(error){
+    console.log("Error at getActivityByName")
+    throw error
+  }
+}
 
 async function attachActivitiesToRoutines(routines) {}
 
 
 
 
-async function updateActivity({ id, name, description }) {
+async function updateActivity({ id, name, description}) {
   // don't try to update the id
   // do update the name and description
   // return the updated activity
-const rows =
+try{
+const {rows} =
   await client.query(
     `
     UPDATE activities
-    SET ${name, description}
-    WHERE id=$1    
+    SET (name, description)
+    WHERE id= ${id}    
     RETURNING *;
-  ` ,[id, name, description]
+  ` ,[name, description]
    );
   return rows;
+} catch (error) {
+  console.log("There is an error in updateActivity");
+  throw error;
 }
+}
+
+
+
+
 
 module.exports = {
   getAllActivities,

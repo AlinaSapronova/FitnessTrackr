@@ -22,7 +22,7 @@ async function createUser({ username, password }) {
     );
     return user;
   } catch (error) {
-    console.log("CreateUsers errors");
+    console.error("CreateUsers errors");
     throw error;
   }
 }
@@ -40,7 +40,7 @@ async function getUser({ username, password }) {
     return ;
   }
   else {
-    throw SomeError;
+    throw console.log("Thers an error in GetUser");
   }
   
 }
@@ -55,7 +55,8 @@ async function getUserById(userId) {
   `,[userId]);
   return user;
  }catch(error){
-throw error;
+  console.error('Error getUserById')
+  throw error;
   }
 }
 // delete user.password;
@@ -77,9 +78,10 @@ async function getUserByUsername(username) {
       [username]
     );
     return user;
-    }catch(error) {
+    }catch(error){
+      console.error('Error getUserByUsername')
       throw error;
-    }
+      }
 }
 
 
