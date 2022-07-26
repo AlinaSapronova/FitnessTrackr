@@ -27,7 +27,6 @@ async function createUser({ username, password }) {
   }
 }
 
-//get user - this hsould be able to verify the password against the hashed password.
 async function getUser({ username, password }) {
   const user = await getUserByUsername(username);
   const hashedPassword = user.password;
@@ -59,7 +58,6 @@ async function getUserById(userId) {
   throw error;
   }
 }
-// delete user.password;
 
 
 

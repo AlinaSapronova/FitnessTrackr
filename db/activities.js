@@ -14,11 +14,6 @@ async function createActivity({ name, description }) {
       [name, description]
     );
     return rows[0];
-
-    // const tagList = await createTags(tags);
-
-    // return await addTagsToPost(post.id, tagList);
-  // return the new activity
 }
 
 async function getAllActivities() {
@@ -27,13 +22,7 @@ async function getAllActivities() {
       SELECT *
       FROM activities;
     `);
-
-    // const posts = await Promise.all(
-    //   postIds.map((post) => getPostById(post.id))
-    // );
-
     return rows;
-  // select and return an array of all activities
 }
 
 async function getActivityById(id) {

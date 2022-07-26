@@ -37,13 +37,6 @@ return rows;
 
 }
 
-      
-// JOIN routine_activities ON routine_activities."activityId" = activities.id
-// JOIN username AS "creatorName"
-// ON routines.creatorId = routines.user(id)
-//routine_activities.count
-//routine_activities.duration,
-//routine_activities."routineId"
 async function getAllRoutines() {
   try{
   const {rows} = await client.query(`
@@ -59,12 +52,15 @@ async function getAllRoutines() {
 }
 
 async function getAllPublicRoutines() {
-  const {rows: [isPublic]} = await client.query(`
-  SELECT "isPublic"
-  FROM routines;
-  `,
-  );
-  return isPublic;
+  try{
+    const {routine} = await client.query(`
+
+    `);
+    return getAllRoutines(routine);
+    }catch(error) {
+      console.error("getAllRoutines errors")
+      throw error
+    } 
 }
 
 async function getAllRoutinesByUser({ username }) {}
