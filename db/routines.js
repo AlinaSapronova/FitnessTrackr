@@ -36,12 +36,23 @@ return rows;
 
 }
 
+      
+      
 async function getAllRoutines() {
+  try{
   const {rows} = await client.query(`
-  SELECT  * creatorId
-  FROM routines;
+      SELECT *
+      FROM routines
+      JOIN username AS "creatorName"
+      ON routines.creatorId = routines.user(id)
   `);
   return rows;
+
+
+  }catch(error) {
+    console.error("getAllRoutines errors")
+    throw error
+  } 
 }
 
 async function getAllPublicRoutines() {

@@ -1,12 +1,8 @@
 const client = require("./client");
 
-async function addActivityToRoutine({
-  routineId,
-  activityId,
-  count,
-  duration,
-}) {
-  const {rows} = await client.query(`
+async function addActivityToRoutine({routineId,activityId,count,duration,}) {
+  try{
+  const {rows:[routine_activities]} = await client.query(`
   INSERT INTO routine_activities(
   "routineId",
   "activityId",
@@ -16,7 +12,11 @@ async function addActivityToRoutine({
   RETURNING *`
   ,[ routineId,activityId, count,duration]
   );
-  return rows;
+  return routine_activities;
+  }catch(error) {
+    console.error("Add Activity To Routine errors")
+    throw error
+  }
 
 }
 
