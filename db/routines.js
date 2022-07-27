@@ -138,7 +138,16 @@ const{rows:[routine]} =
  }
 }
 
-async function destroyRoutine(id) {}
+async function destroyRoutine(id) {
+  await client.query(`
+  DELETE FROM routine_activities
+  WHERE routine_activities."routineId" = ${id}
+  `)
+  await client.query(`
+  DELETE FROM routines
+  WHERE id = ${id}
+  `)
+}
 
 module.exports = {
   getRoutineById,
