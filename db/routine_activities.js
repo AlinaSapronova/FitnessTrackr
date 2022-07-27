@@ -1,5 +1,6 @@
 const client = require("./client");
 
+
 async function addActivityToRoutine({routineId,activityId,count,duration,}) {
   try{
   const {rows:[routine_activities]} = await client.query(`
@@ -61,13 +62,34 @@ const{rows:[routine_activities]} =
 }
 
 async function destroyRoutineActivity(id) {
-  await client.query(`
+  try{
+  const {rows:[routine_activity]} = await client.query(`
   DELETE FROM routine_activities
-  WHERE "routineId" and "activityId" = ${id}
-  `)
+  WHERE id = ${id}
+  RETURNING *
+  `);
+  return routine_activity;
+  }catch(error) {
+    console.error("destroy routine_activity errors")
+    throw error
+  }
 }
 
-async function canEditRoutineActivity(routineActivityId, userId) {}
+async function canEditRoutineActivity(routineActivityId, userId) {
+  try{
+    const {rows:[routine_activity]} = await client.query(`
+    SELECT *
+    FROM routine_activities
+    JOIN routines ON routine_activities."routineId" = routines.id
+    WHERE routine_activities."activityId" = ${routineActivityId} AND routines."creatorId" = ${userId}
+    `);
+   return routine_activity;
+  
+  }catch(error) {
+    console.error("Errors in Edit Routine_activites")
+    throw error
+  }
+}
 
 module.exports = {
   getRoutineActivityById,
