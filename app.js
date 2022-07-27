@@ -18,5 +18,12 @@ app.use("/api", apiRouter);
 client.connect();
 
 // Setup your Middleware and API Router here
+app.use((error, req, res, next) => {
+    res.send({
+      name: error.name,
+      message: error.message,
+      error: error.message
+    });
+  });
 
 module.exports = app;
