@@ -2,6 +2,7 @@ const client = require("./client");
 
 // database functions
 async function createActivity({ name, description }) {
+  try{
 
     const {
       rows
@@ -14,25 +15,40 @@ async function createActivity({ name, description }) {
       [name, description]
     );
     return rows[0];
+  }catch(error) {
+    console.error("Errors in create Ativities")
+    throw error
+  }
 }
 
 async function getAllActivities() {
-  
+  try{
     const { rows } = await client.query(`
       SELECT *
       FROM activities;
     `);
-    return rows;
+    return rows;}
+    catch(error) {
+      console.error("Errors in get all Ativities")
+      throw error
+    }
 }
 
 async function getActivityById(id) {
+
+  try{
   const { rows  } = await client.query(`
   SELECT *
   FROM activities
   WHERE id=$1;
 `, [id]);
 return rows[0];
+  }catch(error) {
+    console.error("Errors in get Ativities by ID")
+    throw error
+  }
 }
+
 
 
 async function getActivityByName(name) {
@@ -84,7 +100,7 @@ return activity;
 
 
 
-async function updateActivity({ ...fields}) {
+async function updateActivity({...fields}) {
   // don't try to update the id
   // do update the name and description
   // return the updated activity
@@ -102,7 +118,7 @@ const{rows:[activity]} =
     `,
       Object.values(fields)
     );
-    return activity
+    return activity;
    } catch (error) {
       console.log("There is an error in updateActivity");
        throw error;
