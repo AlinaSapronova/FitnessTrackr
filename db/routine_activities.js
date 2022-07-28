@@ -79,13 +79,13 @@ async function destroyRoutineActivity(id){
 
 async function canEditRoutineActivity(routineActivityId, userId) {
   try{
-    const {rows:[routine_activity]} = await client.query(`
+    const {rows:[routineActivity]} = await client.query(`
     SELECT *
     FROM routine_activities
     JOIN routines ON routine_activities."routineId" = routines.id
     WHERE routine_activities."activityId" = ${routineActivityId} AND routines."creatorId" = ${userId}
     `);
-   return routine_activity;
+   return routineActivity;
 
   }catch(error) {
     console.error("Errors in Edit Routine_activites")

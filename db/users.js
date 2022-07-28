@@ -48,7 +48,7 @@ async function getUserById(userId) {
  // eslint-disable-next-line no-useless-catch
  try{
   const {rows:[user] } = await client.query(`
-  SELECT id
+  SELECT id, username
   FROM users
   WHERE id=$1
   `,[userId]);
