@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllRoutines, getRoutineById, createRoutine } = require('../db');
+const { getAllRoutines, createRoutine } = require('../db');
 const router = express.Router();
 const { requireUser } = require("./utils");
 
@@ -16,20 +16,13 @@ router.get("/", async (req, res, next) => {
 // POST /api/routines
 router.post("/", requireUser, async (req, res, next) => {
     const { name, goal } = req.body;
-    const newRoutines = {};
     try {
-      const existRoutine = await getRoutineById({id: req.params.creatorId});
-      if (existRoutine) {
-        next({
-          name: "Activity exists",
-          message: `An activity with name ${creatorId} already exists`,
-        });
-      } else {
-        newRoutines.name = name;
-        newRoutines.goal = goal;
-        const createdRoutines = await createRoutine(newRoutines);
-        res.send(createdRoutines);
-      }
+        const createdRoutines = await createRoutine({
+            creatorId: req.user.id, name, goal, 
+            isPublic: req.body.isPublic});
+        if(createdRoutines){
+            res.send(createdRoutines)
+        }
     } catch (error) {
       next(error);
     }
