@@ -87,42 +87,48 @@ router.delete("/:routineId", requireUser, async (req, res, next) => {
 });
 // POST /api/routines/:routineId/activities
 router.post("/:activityId", async (req, res, next) => {
-  const id = req.params.routineId;
-  const { activityId, count, duration } = req.body;
-  try {
-    const originalActivity = await getRoutineActivitiesByRoutine(id);
-    if (!originalActivity) {
-      next({
-        name: "RoutineActivityExists",
-        message: `a RoutineActivity by that routine${id}, activity${id}, combo already exists`,
+    const id = req.params.routineId;
+    const { activityId, count, duration } = req.body;
+    try {
+      const originalRoutine = await getRoutineById(id);
+    //   console.log(originalRoutine) if no routine - return
+      if (!originalRoutine) {
+        next({
+          name: "RoutineActivityExists",
+          message: `a RoutineActivity by that routine${id}, activity${id}, combo already exists`,
+        });
+      }
+      const createdRoutine = id.creatorid
+      if(req.user.id !== createdRoutine){
+        next({
+            name: "NoAuthoActivityExists",
+            message: `no routine foundw that id`,
+          });
+      }
+    //   const nameOfRoutine= await getRoutineById(id);
+    //   if (nameOfRoutine) {
+    //     next({
+    //       name: "RoutineActivityExists",
+    //       message: `An activity with name ${id} already exists`,
+    //     });
+    //   }
+      const createoutine = await addActivityToRoutine({routineId:
+        activityId,
+        count,
+        duration,
+        id,
       });
-      return;
+      if (createoutine) {
+        res.send(createoutine);
+      } else {
+        next({
+          name: "ACtivity Error",
+          message: "Error adding routine",
+        });
+      }
+    } catch ({ name, message }) {
+      next({ name, message });
     }
-
-    const nameOfActivity = await getRoutineById(id);
-    if (nameOfActivity) {
-      next({
-        name: "ActivityExists",
-        message: `An activity with name ${id} already exists`,
-      });
-    }
-    const createdActivity = await addActivityToRoutine({
-      activityId,
-      count,
-      duration,
-      id,
-    });
-    if (createdActivity) {
-      res.send(createdActivity);
-    } else {
-      next({
-        name: "UnauthorizedUserError",
-        message: "Activity 10000 not found",
-      });
-    }
-  } catch ({ name, message }) {
-    next({ name, message });
-  }
-});
+  });
 
 module.exports = router;
