@@ -84,22 +84,25 @@ router.get("/:username/routines", async (req, res, next) => {
   //   const routines = await getAllRoutinesByUser(user.username);
   //     res.send(routines)
   //   }
+  // } catch(error){
+  //      next(error)
+  //     }})
     
   try{
-    // const {username} = req.params;
-    // const user = await getUserByUsername(username);
-    // if (!user){
-    //   next({
-    //     name: "NO USER FOUND",
-    //     message: "USER IS NOT FOUND!"
-    //   });
-    // }
-    // if(req.user && user.id == req.user.id ){
-    //   const routines = await getAllRoutinesByUser({username: username});
-    //   res.send(routines)
-    // }
-    // const routines = await getPublicRoutinesByUser({username: username});
-    // res.send(routines)
+    const {username} = req.params;
+    const user = await getUserByUsername(username);
+    if (!user){
+      next({
+        name: "NO USER FOUND",
+        message: "USER IS NOT FOUND!"
+      });
+    }
+    if(req.user && user.id == req.user.id ){
+      const routines = await getAllRoutinesByUser({username: username});
+      res.send(routines)
+    }
+    const routines = await getPublicRoutinesByUser({username: username});
+    res.send(routines)
   } catch(error){
     next(error)
   }
