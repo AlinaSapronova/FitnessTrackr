@@ -74,15 +74,6 @@ router.post("/", requireUser, async (req, res, next) => {
 router.patch("/:activityId", async (req, res, next) => {
   const id = req.params.activityId;
   const { name, description } = req.body;
-//   const updatedActivity ={};
-
-//   if (name) {
-//       updatedActivity.name = name;
-//     }
-
-//     if (description) {
-//       updatedActivity.description = description;
-//     }
   try {
     const originalActivity = await getActivityById(id);
     if (!originalActivity) {
@@ -101,7 +92,6 @@ router.patch("/:activityId", async (req, res, next) => {
       });
     }
     const updatedActivity = await updateActivity({name, description, id});
-    // console.log(updatedActivity,"this is update activity")
     if (updatedActivity) {
       res.send(updatedActivity);
     } else {
