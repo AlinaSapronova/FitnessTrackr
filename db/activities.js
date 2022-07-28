@@ -100,7 +100,7 @@ return activity;
 
 
 
-async function updateActivity({...fields}) {
+async function updateActivity({id,...fields}) {
   // don't try to update the id
   // do update the name and description
   // return the updated activity
@@ -113,7 +113,7 @@ const{rows:[activity]} =
       `
       UPDATE activities
       SET ${setString}
-      WHERE id=$1
+      WHERE id=${id}
       RETURNING *;
     `,
       Object.values(fields)

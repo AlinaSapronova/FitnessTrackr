@@ -4,23 +4,38 @@ const { requireUser } = require("./utils");
 //npm run test:watch api
 
 const {
-  getPublicRoutinesByActivity,
   getAllActivities,
   createActivity,
   getActivityByName,
   getActivityById,
   updateActivity,
+  getPublicRoutinesByActivity,  
+  getAllPublicRoutines
 } = require("../db");
 
-// GET /api/activities/:activityId/routines
-// router.get("/:activityId/routines", async (req, res, next)=>{
-//     const {}
-//     try{
 
-//     }catch(error){
-//         next(error)
-//     }
-// })
+
+
+// GET /api/activities/:activityId/routines
+router.get("/:activityId/routines", async (req, res, next)=>{
+    const id = req.params.activityId
+    // console.log(id)
+    try{
+        const routines = await getAllPublicRoutines({id})
+        const activity = await getActivityById(id)
+        if(!activity){
+            next({
+                    name: "RoutineDoesNotExist",
+                    message: `Activity ${id} not found`
+            })
+            }
+        if(routines){    
+            res.send(routines)
+        }
+        }catch(error){
+        next(error)
+    }
+})
 
 // GET /api/activities
 router.get("/", async (req, res, next) => {
@@ -60,15 +75,15 @@ router.post("/", requireUser, async (req, res, next) => {
 router.patch("/:activityId", async (req, res, next) => {
   const id = req.params.activityId;
   const { name, description } = req.body;
-  const updatedActivity ={};
+//   const updatedActivity ={};
 
-  if (name) {
-      updatedActivity.name = name;
-    }
+//   if (name) {
+//       updatedActivity.name = name;
+//     }
 
-    if (description) {
-      updatedActivity.description = description;
-    }
+//     if (description) {
+//       updatedActivity.description = description;
+//     }
   try {
     const originalActivity = await getActivityById(id);
     if (!originalActivity) {
@@ -86,7 +101,7 @@ router.patch("/:activityId", async (req, res, next) => {
         message: `An activity with name ${name} already exists`,
       });
     }
-    const updatedActivity = await updateActivity();
+    const updatedActivity = await updateActivity({name, description, id});
     // console.log(updatedActivity,"this is update activity")
     if (updatedActivity) {
       res.send(updatedActivity);
