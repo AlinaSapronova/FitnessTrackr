@@ -9,7 +9,6 @@ const {
   getActivityByName,
   getActivityById,
   updateActivity,
-  getPublicRoutinesByActivity,  
   getAllPublicRoutines
 } = require("../db");
 
@@ -21,7 +20,7 @@ router.get("/:activityId/routines", async (req, res, next)=>{
     const id = req.params.activityId
     // console.log(id)
     try{
-        const routines = await getAllPublicRoutines({id})
+        const routinesOfPublic= await getAllPublicRoutines({id})
         const activity = await getActivityById(id)
         if(!activity){
             next({
@@ -29,8 +28,8 @@ router.get("/:activityId/routines", async (req, res, next)=>{
                     message: `Activity ${id} not found`
             })
             }
-        if(routines){    
-            res.send(routines)
+        if(routinesOfPublic){    
+            res.send(routinesOfPublic)
         }
         }catch(error){
         next(error)
