@@ -85,10 +85,13 @@ router.delete("/:routineId", requireUser, async (req, res, next) => {
     next({ name, message });
   }
 });
+
+
 // POST /api/routines/:routineId/activities
-router.post("/:activityId", async (req, res, next) => {
+router.post("/:routineId/activities", async (req, res, next) => {
     const id = req.params.routineId;
-    const { activityId, count, duration } = req.body;
+    const createdRoutine = id.creatorid
+    const {activityId, count, duration } = req.body;
     try {
       const originalRoutine = await getRoutineById(id);
     //   console.log(originalRoutine) if no routine - return
@@ -98,11 +101,12 @@ router.post("/:activityId", async (req, res, next) => {
           message: `a RoutineActivity by that routine${id}, activity${id}, combo already exists`,
         });
       }
-      const createdRoutine = id.creatorid
+
+      // const createdRoutine = id.creatorid
       if(req.user.id !== createdRoutine){
         next({
             name: "NoAuthoActivityExists",
-            message: `no routine foundw that id`,
+            message: `Activity ID ${activityId} already exists in Routine ID ${id}`,
           });
       }
     //   const nameOfRoutine= await getRoutineById(id);
@@ -112,18 +116,18 @@ router.post("/:activityId", async (req, res, next) => {
     //       message: `An activity with name ${id} already exists`,
     //     });
     //   }
-      const createoutine = await addActivityToRoutine({routineId:
+      const createRoutines = await addActivityToRoutine({
         activityId,
         count,
         duration,
         id,
       });
-      if (createoutine) {
-        res.send(createoutine);
+      if (createRoutines) {
+        res.send(createRoutines);
       } else {
         next({
-          name: "ACtivity Error",
-          message: "Error adding routine",
+          name: "Activity Error",
+          message:  `Activity ID ${activityId} already exists in Routine ID ${id}`,
         });
       }
     } catch ({ name, message }) {
