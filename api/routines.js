@@ -5,6 +5,7 @@ const {
   getRoutineById,
   updateRoutine,
   getRoutineActivitiesByRoutine,
+  getRoutineActivityById,
   addActivityToRoutine,
   destroyRoutine,
 } = require("../db");
@@ -89,49 +90,28 @@ router.delete("/:routineId", requireUser, async (req, res, next) => {
 
 // POST /api/routines/:routineId/activities
 router.post("/:routineId/activities", async (req, res, next) => {
-    const id = req.params.routineId;
-    const createdRoutine = id.creatorid
+    const {routineId} = req.params;
+    // const createdRoutine = id.creatorid
     const {activityId, count, duration } = req.body;
     try {
-      const originalRoutine = await getRoutineById(id);
-    //   console.log(originalRoutine) if no routine - return
-      if (!originalRoutine) {
+      const originalRoutine = await getRoutineActivityById(activityId);
+      if(originalRoutine){
         next({
-          name: "RoutineActivityExists",
-          message: `a RoutineActivity by that routine${id}, activity${id}, combo already exists`,
-        });
-      }
-
-      // const createdRoutine = id.creatorid
-      if(req.user.id !== createdRoutine){
-        next({
-            name: "NoAuthoActivityExists",
-            message: `Activity ID ${activityId} already exists in Routine ID ${id}`,
+            name: "Duplicate",
+            message: `Activity ID ${activityId} already exists in Routine ID ${routineId}`,
           });
       }
-    //   const nameOfRoutine= await getRoutineById(id);
-    //   if (nameOfRoutine) {
-    //     next({
-    //       name: "RoutineActivityExists",
-    //       message: `An activity with name ${id} already exists`,
-    //     });
-    //   }
+      else{
       const createRoutines = await addActivityToRoutine({
+        routineId,
         activityId,
         count,
-        duration,
-        id,
+        duration
       });
-      if (createRoutines) {
-        res.send(createRoutines);
-      } else {
-        next({
-          name: "Activity Error",
-          message:  `Activity ID ${activityId} already exists in Routine ID ${id}`,
-        });
+      res.send(createRoutines)
       }
-    } catch ({ name, message }) {
-      next({ name, message });
+    } catch (error) {
+      next(error);
     }
   });
 
