@@ -18,11 +18,13 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
 }
 
 async function getRoutineById(id) {
+  console.log("ADCFB", id)
   const { rows :[routine] } = await client.query(`
   SELECT *
   FROM routines
   WHERE id=$1;
 `, [id]);
+console.log("ROUTINE", routine)
 return routine;
   
 }

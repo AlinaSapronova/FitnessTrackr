@@ -62,14 +62,15 @@ const{rows:[routine_activities]} =
 
 async function destroyRoutineActivity(id){ 
   try {
+    console.log(id, "ROUTINe ACTIVITY IDDD")
     const {
       rows: [routineActivity],
     } = await client.query(
       ` DELETE FROM routine_activities 
-        WHERE id = ${id}
+        WHERE id = $1
         RETURNING *;
-    `
-    );
+    `,[id]
+    );console.log(routineActivity, "ROUTINe ACTIVITY")
     return routineActivity;
   } catch (error) {
     console.log("throw error")
@@ -83,10 +84,15 @@ async function canEditRoutineActivity(routineActivityId, userId) {
     SELECT *
     FROM routine_activities
     JOIN routines ON routine_activities."routineId" = routines.id
-    WHERE routine_activities."activityId" = ${routineActivityId} AND routines."creatorId" = ${userId}
-    `);
-   return routineActivity;
+    AND routine_activities.id = $1
 
+    
+    `,[routineActivityId]);
+    if(userId === routineActivity.creatorId){
+      return true;
+    }else {
+      return false
+    }
   }catch(error) {
     console.error("Errors in Edit Routine_activites")
     throw error
