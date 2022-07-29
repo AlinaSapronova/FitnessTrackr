@@ -24,8 +24,8 @@ async function getRoutineActivityById(id) {
   const { rows :[routine_activities] } = await client.query(`
   SELECT *
   FROM routine_activities
-  WHERE id=${id};
-`,);
+  WHERE id=$1;
+`,[id]);
 return routine_activities;
 }
 
